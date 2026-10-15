@@ -1,4 +1,5 @@
 import './style.css'
+const BASE_URL = import.meta.env.BASE_URL
 
 // ========================================
 // LOADING SCREEN
@@ -57,7 +58,7 @@ document.querySelector('#app').innerHTML = `
       </div>
 
       <figure class="hero-photo">
-        <img src="/images/main darla.png" alt="Portrait of Darya Pugina">
+        <img src="${BASE_URL}/images/main darla.png" alt="Portrait of Darya Pugina">
         <figcaption>DARLA</figcaption>
       </figure>
 
@@ -96,7 +97,7 @@ document.querySelector('#app').innerHTML = `
 
         <div class="about-side">
           <div class="about-photo">
-            <img src="/images/about-photo.jpg" alt="Darya">
+            <img src="${BASE_URL}/images/about-photo.jpg" alt="Darya">
             <span class="about-photo-caption">life is a blessing</span>
           </div>
           <div class="about-facts">
@@ -131,7 +132,7 @@ document.querySelector('#app').innerHTML = `
 
       <div class="about-note">
         <p id="about-personal">the more you mess around the more you fing out.</p>
-        <img src="/images/fuck around.jpg" alt="" class="about-note-image">
+        <img src="${BASE_URL}/images/fuck around.jpg" alt="" class="about-note-image">
       </div>
     </section>
 
@@ -184,21 +185,21 @@ document.querySelector('#app').innerHTML = `
 
       <div class="project-grid" aria-label="Portfolio projects">
         <a href="https://github.com/ddarlaa/IceBreakerApp/tree/laba5" target="_blank" rel="noopener noreferrer" class="project-card">
-          <img src="/images/icebreaker app pic.jpg" alt="IceBreaker App">
+          <img src="${BASE_URL}/images/icebreaker app pic.jpg" alt="IceBreaker App">
           <h3>IceBreaker App</h3>
           <p>Service to get to know each other better. An app for students to find friends and communicate. Developed with C# and ASP.NET, using a PostgreSQL database and Docker for deployment.</p>
           <span class="project-arrow">→</span>
         </a>
 
         <a href="https://t.me/sailingclub_itmo" target="_blank" rel="noopener noreferrer" class="project-card">
-          <img src="/images/smm proof.jpg" alt="SMM for ITMO Sailing Club">
+          <img src="${BASE_URL}/images/smm proof.jpg" alt="SMM for ITMO Sailing Club">
           <h3>SMM for ITMO Sailing Club</h3>
           <p>Telegram channel for ITMO Sailing Club. I created a content plan, designed posts and wrote texts for the channel. Developed with Photoshop, Figma and Telegram. Subscribers: 350+.</p>
           <span class="project-arrow">→</span>
         </a>
 
         <a href="https://ddarlaa.github.io/front_laba2/blog/" target="_blank" rel="noopener noreferrer" class="project-card">
-          <img src="/images/blogging.jpg" alt="Personal Blog with JS projects">
+          <img src="${BASE_URL}/images/blogging.jpg" alt="Personal Blog with JS projects">
           <h3>Personal Blog with JS projects</h3>
           <p>Hugo site with a blog and several small JS projects. Developed with Hugo, JavaScript, CSS and HTML.</p>
           <span class="project-arrow">→</span>
@@ -227,7 +228,7 @@ document.querySelector('#app').innerHTML = `
 
     <div class="friend-board">
       <div class="friend-polaroid polaroid-one">
-        <img src="/images/sailing proof.jpg" alt="">
+        <img src="${BASE_URL}/images/sailing proof.jpg" alt="">
         <span>main hobby of this year: sailing</span>
       </div>
       <div class="friend-note note-one">
@@ -235,7 +236,7 @@ document.querySelector('#app').innerHTML = `
         <p>late night walks<br>reading on my pocketbook<br>going out of my comfort zone<br>ambient music<br>travelling as much as I can</p>
       </div>
       <div class="friend-polaroid polaroid-two">
-        <img src="/images/cave explorer.jpg" alt="">
+        <img src="${BASE_URL}/images/cave explorer.jpg" alt="">
         <span>type of activity after hangover</span>
       </div>
       <div class="friend-note note-two">
