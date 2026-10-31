@@ -202,6 +202,7 @@ function getPortfolioHTML() {
   `;
 }
 
+
 // --- СТРАНИЦА 3: CONTACTS ---
 function getContactsHTML() {
   return `
@@ -210,17 +211,14 @@ function getContactsHTML() {
       <h2>CONTACTS.</h2>
       
       <div class="contact-links-grid">
-        <a href="tel:+79999999999" class="contact-big-link">📞 +7 (999) 999-99-99</a>
+        <a href="tel:+79999999999" class="contact-big-link">📞 +7 (911) 972-61-04</a>
         <a href="mailto:d.pugina@list.ru" class="contact-big-link">✉️ d.pugina@list.ru</a>
       </div>
 
       <div class="social-bento">
         <a href="https://t.me/ddarla" target="_blank" class="bento-box"><span>Telegram</span></a>
-        <a href="https://t.me/+your_private_link" target="_blank" class="bento-box private"><span>Secret TG Channel 🔒</span></a>
         <a href="https://github.com/ddarlaa" target="_blank" class="bento-box"><span>GitHub</span></a>
         <a href="https://instagram.com/ddaarrla" target="_blank" class="bento-box pink"><span>Instagram</span></a>
-        <a href="https://pinterest.com/your_board" target="_blank" class="bento-box"><span>Pinterest (Vibes)</span></a>
-        <a href="https://linkedin.com/in/yourprofile" target="_blank" class="bento-box blue"><span>LinkedIn</span></a>
       </div>
     </section>
   `;
