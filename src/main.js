@@ -1,391 +1,339 @@
 import './style.css'
-const BASE_URL = import.meta.env.BASE_URL
+const BASE_URL = import.meta.env.BASE_URL || ''
 
 // ========================================
-// LOADING SCREEN
+// STATE & ROUTER (SPA LOGIC)
 // ========================================
 
-const animalFacts = [
-  'Octopuses have three hearts.',
-  'Sea otters hold hands while sleeping so they do not drift apart.',
-  'Goats have rectangular pupils.',
-  'Cows have best friends and can become stressed when separated.',
-  'A group of flamingos is called a flamboyance.',
-  'Ravens can remember human faces.',
-  'Penguins propose to their mates with pebbles.',
-  'Butterflies taste with their feet.',
-  'Crows can use tools to solve problems.',
-  'A snail can sleep for several years.'
-]
+const hasVisited = sessionStorage.getItem('hasVisited');
 
-const randomFact = animalFacts[Math.floor(Math.random() * animalFacts.length)]
+function renderApp() {
+  const hash = window.location.hash || '#/';
+  const app = document.querySelector('#app');
+  
+  let pageContent = '';
+  switch (hash) {
+    case '#/': pageContent = getHomeHTML(); break;
+    case '#/portfolio': pageContent = getPortfolioHTML(); break;
+    case '#/contacts': pageContent = getContactsHTML(); break;
+    case '#/life': pageContent = getLifeHTML(); break;
+    default: pageContent = getHomeHTML();
+  }
+
+  app.innerHTML = `
+    ${!hasVisited ? getLoadingScreenHTML() : ''}
+    ${getHeaderHTML(hash)}
+    <main id="normal-site" class="page-transition">
+      ${pageContent}
+    </main>
+    ${getFooterHTML()}
+  `;
+
+  attachEvents();
+  
+  if (!hasVisited) {
+    sessionStorage.setItem('hasVisited', 'true');
+    const animalFacts = [
+      'Octopuses have three hearts.',
+      'Sea otters hold hands while sleeping so they do not drift apart.',
+      'Goats have rectangular pupils.',
+      'Crows can remember human faces.'
+    ];
+    document.querySelector('#animal-fact').textContent = animalFacts[Math.floor(Math.random() * animalFacts.length)];
+    setTimeout(() => document.querySelector('#loading-screen')?.classList.add('hidden'), 3000);
+  }
+}
+
+window.addEventListener('hashchange', renderApp);
 
 // ========================================
-// PAGE
+// HTML GENERATORS
 // ========================================
 
-document.querySelector('#app').innerHTML = `
-  <div id="loading-screen">
-    <div class="loading-content">
-      <p class="loading-label">/// LOADING PORTFOLIO...</p>
-      <p id="animal-fact"></p>
-      <p class="loading-hint">did you know?</p>
-      <div class="loading-bar"><div class="loading-bar-progress"></div></div>
-    </div>
-  </div>
-
-  <header class="site-header">
-    <div class="header-date">30/09/2026</div>
-    <div class="header-search">
-      <span class="search-icon">⌕</span>
-      <span>research</span>
-    </div>
-    <button id="friend-mode-button" class="friend-mode-button" type="button">FRIEND MODE</button>
-  </header>
-
-  <main id="normal-site">
-    <section id="about" class="hero">
-      <nav class="hero-navigation" aria-label="Main navigation">
-        <a href="#about">about</a>
-        <a href="#education">education</a>
-        <a href="#portfolio">portfolio</a>
-        <a href="#contact">contact</a>
-      </nav>
-
-      <div class="hero-title">
-        <h1>HI</h1>
-        <p>I'M</p>
+function getLoadingScreenHTML() {
+  return `
+    <div id="loading-screen">
+      <div class="loading-content">
+        <p class="loading-label">/// LOADING PORTFOLIO...</p>
+        <p id="animal-fact"></p>
+        <p class="loading-hint">did you know?</p>
+        <div class="loading-bar"><div class="loading-bar-progress"></div></div>
       </div>
+    </div>
+  `;
+}
 
+function getHeaderHTML(currentHash) {
+  const navItem = (path, name) => 
+    `<a href="${path}" class="${currentHash === path ? 'active-link' : ''}">${name}</a>`;
+
+  const today = new Date();
+  const formattedDate = `${String(today.getDate()).padStart(2, '0')}/${String(today.getMonth() + 1).padStart(2, '0')}/${today.getFullYear()}`;
+
+  return `
+    <header class="site-header">
+      <div class="header-date">${formattedDate}</div>
+      <nav class="navigation">
+        ${navItem('#/', 'home')}
+        ${navItem('#/portfolio', 'portfolio')}
+        ${navItem('#/contacts', 'contacts')}
+        ${navItem('#/life', 'life')}
+      </nav>
+    </header>
+  `;
+}
+
+function getFooterHTML() {
+  return `
+    <footer class="site-footer">
+      <span>© 2026 DARLA</span>
+      <span>made with love and JavaScript</span>
+    </footer>
+  `;
+}
+
+// --- СТРАНИЦА 1: HOME ---
+function getHomeHTML() {
+  return `
+    <section id="about" class="hero">
       <figure class="hero-photo">
         <img src="${BASE_URL}/images/main darla.png" alt="Portrait of Darya Pugina">
-        <figcaption>DARLA</figcaption>
       </figure>
 
-      <p id="about-description" class="hero-description">
-        Software Engineering student interested in
-        web development, backend systems and creative technologies.
-        I enjoy combining technical and visual work —
-        from programming and databases to design,
-        photography and 3D.
-      </p>
+      <div class="hero-content">
+        <div class="hero-title">
+          <h1>HI</h1>
+          <p>I'M</p>
+          <div class="hero-name">DARLA</div>
+        </div>
 
-      <p class="hero-caption">
-        The main idea of this site is for you to get to know me better. No matter the goal, age and location. Internationally friendly.
-      </p>
-    </section>
+        <p class="hero-description">
+          Software Engineering student interested in
+          web development, backend systems and creative technologies.
+          I enjoy combining technical and visual work —
+          from programming and databases to design,
+          photography and 3D.
+        </p>
 
-    <section class="quick-info">
-      <div class="info-item"><span class="info-label">AGE</span><span>20</span></div>
-      <div class="info-item"><span class="info-label">GPA</span><span>4.67 / 5.0</span></div>
-      <div class="info-item"><span class="info-label">BASED IN</span><span>Saint-Petersburg, Russia</span></div>
-      <div class="info-item"><span class="info-label">CURRENT STATUS</span><span>studying & open for work</span></div>
+        <p class="hero-caption">
+          The main idea of this site is for you to get to know me better. No matter the goal, age and location. Internationally friendly.
+        </p>
+      </div>
     </section>
 
     <section class="content-section about-section">
       <div class="section-heading"><h2>ABOUT</h2></div>
-
       <div class="about-grid">
         <div class="about-main">
           <p class="about-big">engineer & designer</p>
-          <p id="about-text" class="about-description-text">
+          <p class="about-description-text">
             My actual full name is Daria Pugina. I've been studying Software Engineering
             for 3 years in ITMO University, Russia. Besides all the hardskills of Full-Stack
             Developer I'm mastering my visual skills in design, photography and 3D.
           </p>
         </div>
-
-        <div class="about-side">
-          <div class="about-photo">
-            <img src="${BASE_URL}/images/about-photo.jpg" alt="Darya">
-            <span class="about-photo-caption">life is a blessing</span>
-          </div>
-          <div class="about-facts">
-            <div class="about-fact"><span>EXPERIENCE</span><strong>3 years</strong></div>
-            <div class="about-fact"><span>SPECIAL SKILL</span><strong>precision</strong></div>
-            <div class="about-fact"><span>STATUS</span><strong>open to relocate</strong></div>
-          </div>
-        </div>
-      </div>
-
-      <section class="content-section education-section" id="education">
-        <div class="section-heading"><h2>EDUCATION</h2></div>
-        <div class="education-list">
-          <article class="education-item">
-            <div class="education-year">2024 — 2028</div>
-            <div class="education-info">
-              <h3>ITMO University, Software Engineering and Computer Technologies</h3>
-              <p class="education-degree">Bachelor’s Degree in Computer Technologies in Design</p>
-              <p class="education-description">Full tuition, scholarship for the extracurricular activities.</p>
-            </div>
-          </article>
-          <article class="education-item">
-            <div class="education-year">Fall 2026 — 2027</div>
-            <div class="education-info">
-              <h3>Abdullah Gul University</h3>
-              <p class="education-degree">Exchange semester in Computer Engineering department</p>
-              <p class="education-description">Mobile programming, analysis of algorithms and operating systems.</p>
-            </div>
-          </article>
-        </div>
-      </section>
-
-      <div class="about-note">
-        <p id="about-personal">the more you mess around the more you fing out.</p>
-        <img src="${BASE_URL}/images/fuck around.jpg" alt="" class="about-note-image">
       </div>
     </section>
 
     <section class="content-section skills-section">
       <div class="section-heading"><h2>SKILLS</h2></div>
       <div class="skills-grid">
-        <div class="skill-card">
-          <div class="skill-card-top"><span>CODE</span></div>
-          <h3>PROGRAMMING</h3>
-          <div class="skill-list">
-            <span>C#</span><span>C</span><span>Python</span><span>JavaScript</span><span>CSS</span>
-          </div>
-        </div>
-        <div class="skill-card">
-          <div class="skill-card-top"><span>SYSTEMS</span></div>
-          <h3>BACKEND</h3>
-          <div class="skill-list">
-            <span>ASP.NET</span><span>Databases</span><span>Docker</span><span>Grafana</span><span>Git</span><span>Nginx</span><span>Postman</span>
-          </div>
-        </div>
-        <div class="skill-card skill-card-pink">
-          <div class="skill-card-top"><span>VISUAL</span></div>
-          <h3>CREATIVE</h3>
-          <div class="skill-list">
-            <span>Blender</span><span>Unity</span><span>Photoshop</span><span>Illustrator</span><span>InDesign</span><span>Lightroom</span><span>Figma</span><span>Krita</span>
-          </div>
-        </div>
-        <div class="skill-card">
-          <div class="skill-card-top"><span>LANGUAGES</span></div>
-          <h3>LANGUAGES</h3>
-          <div class="language-list">
-            <div><span>English</span><strong>C2</strong></div>
-            <div><span>Spanish</span><strong>B1</strong></div>
-            <div><span>Turkish</span><strong>A1</strong></div>
-          </div>
-        </div>
+        <div class="skill-card"><h3>PROGRAMMING</h3><div class="skill-list"><span>C#</span><span>C</span><span>Python</span><span>JavaScript</span><span>CSS</span></div></div>
+        <div class="skill-card"><h3>BACKEND</h3><div class="skill-list"><span>ASP.NET</span><span>PostgreSQL</span><span>Docker</span><span>Grafana</span><span>Nginx</span></div></div>
+        <div class="skill-card skill-card-pink"><h3>CREATIVE</h3><div class="skill-list"><span>Blender</span><span>Unity</span><span>Figma</span><span>Photoshop</span><span>Lightroom</span></div></div>
       </div>
     </section>
 
-    <section id="portfolio" class="content-section portfolio-section">
-      <div class="section-heading"><h2>PORTFOLIO</h2></div>
-
-      <div class="portfolio-controls">
-        <span>SCROLL TO EXPLORE ↘</span>
-        <div>
-          <button class="portfolio-arrow" id="projects-prev" type="button" aria-label="Previous project">←</button>
-          <button class="portfolio-arrow" id="projects-next" type="button" aria-label="Next project">→</button>
-        </div>
-      </div>
-
-      <div class="project-grid" aria-label="Portfolio projects">
-        <a href="https://github.com/ddarlaa/IceBreakerApp/tree/laba5" target="_blank" rel="noopener noreferrer" class="project-card">
-          <img src="${BASE_URL}/images/icebreaker app pic.jpg" alt="IceBreaker App">
-          <h3>IceBreaker App</h3>
-          <p>Service to get to know each other better. An app for students to find friends and communicate. Developed with C# and ASP.NET, using a PostgreSQL database and Docker for deployment.</p>
-          <span class="project-arrow">→</span>
-        </a>
-
-        <a href="https://t.me/sailingclub_itmo" target="_blank" rel="noopener noreferrer" class="project-card">
-          <img src="${BASE_URL}/images/smm proof.jpg" alt="SMM for ITMO Sailing Club">
-          <h3>SMM for ITMO Sailing Club</h3>
-          <p>Telegram channel for ITMO Sailing Club. I created a content plan, designed posts and wrote texts for the channel. Developed with Photoshop, Figma and Telegram. Subscribers: 350+.</p>
-          <span class="project-arrow">→</span>
-        </a>
-
-        <a href="https://ddarlaa.github.io/front_laba2/blog/" target="_blank" rel="noopener noreferrer" class="project-card">
-          <img src="${BASE_URL}/images/blogging.jpg" alt="Personal Blog with JS projects">
-          <h3>Personal Blog with JS projects</h3>
-          <p>Hugo site with a blog and several small JS projects. Developed with Hugo, JavaScript, CSS and HTML.</p>
-          <span class="project-arrow">→</span>
-        </a>
-      </div>
-    </section>
-
-    <section id="contact" class="contact-section">
-      <p class="eyebrow">HAVE A QUESTION?</p>
-      <h2>LET'S TALK.</h2>
-      <a href="mailto:d.pugina@list.ru" class="contact-email">d.pugina@list.ru</a>
-      <div class="social-links">
-        <a href="https://github.com/ddarlaa" target="_blank" rel="noopener noreferrer">GitHub</a>
-        <a href="https://t.me/ddarla" target="_blank" rel="noopener noreferrer">Telegram</a>
-        <a href="https://instagram.com/ddaarrla" target="_blank" rel="noopener noreferrer">Instagram</a>
-      </div>
-    </section>
-  </main>
-
-  <section id="friend-space" class="friend-space">
-    <div class="friend-intro">
-      <span class="friend-small">/// SECRET CORNER</span>
-      <h2>okay...<br>forget the CV.</h2>
-      <p>get to know me.</p>
-    </div>
-
-    <div class="friend-board">
-      <div class="friend-polaroid polaroid-one">
-        <img src="${BASE_URL}/images/sailing proof.jpg" alt="">
-        <span>main hobby of this year: sailing</span>
-      </div>
-      <div class="friend-note note-one">
-        <span>things I currently like:</span>
-        <p>late night walks<br>reading on my pocketbook<br>going out of my comfort zone<br>ambient music<br>travelling as much as I can</p>
-      </div>
-      <div class="friend-polaroid polaroid-two">
-        <img src="${BASE_URL}/images/cave explorer.jpg" alt="">
-        <span>type of activity after hangover</span>
-      </div>
-      <div class="friend-note note-two">
-        <span>01 / 10 / 2026</span>
-        <p>currently in Turkey making assignments and enjoying the sun.</p>
-      </div>
-      <div class="friend-sticker sticker-one">♡</div>
-      <div class="friend-sticker sticker-two">!!!</div>
-      <div class="friend-sticker sticker-three">☆</div>
-    </div>
-
-    <div class="letters-heading">
-      <span>/// LEAVE SOMETHING HERE</span>
-      <h3>send me a little letter</h3>
-      <p>no CVs. no formal introductions. just say hi.</p>
-    </div>
-
-    <div class="envelope-grid">
-      ${[1, 2, 3].map((number) => `
-        <article class="envelope-card">
-          <div class="envelope" tabindex="0" role="button" aria-label="Open letter envelope">
-            <div class="letter">
-              <label>your name</label>
-              <input type="text" class="letter-name" placeholder="your name..." autocomplete="name">
-              <label>little message</label>
-              <textarea class="letter-message" placeholder="write something..."></textarea>
-              <button class="send-letter" type="button">send ♡</button>
-            </div>
-            <div class="envelope-back"></div>
-            <div class="envelope-flap"></div>
-            <div class="envelope-front"><span>to: darla ♡</span></div>
+    <section class="content-section education-section">
+      <div class="section-heading"><h2>EDUCATION & ACHIEVEMENTS</h2></div>
+      <div class="education-list">
+        <article class="education-item">
+          <div class="education-year">2024 — 2028</div>
+          <div class="education-info">
+            <h3>ITMO University, Software Engineering</h3>
+            <p class="education-degree">Bachelor’s Degree</p>
+            <p class="education-description">Full tuition, scholarship for the extracurricular activities.</p>
           </div>
-          ${number === 2 ? '<p class="envelope-caption">break the ice</p>' : ''}
         </article>
-      `).join('')}
+        <article class="education-item">
+          <div class="education-year">Fall 2026</div>
+          <div class="education-info">
+            <h3>Abdullah Gul University (Turkey)</h3>
+            <p class="education-degree">Exchange Semester</p>
+            <p class="education-description">Mobile programming, analysis of algorithms and operating systems.</p>
+          </div>
+        </article>
+        <article class="education-item">
+          <div class="education-year">Extra</div>
+          <div class="education-info">
+            <h3>Volunteering & Community</h3>
+            <p class="education-description">Active participant in conversation clubs and Buddy System. Volunteering in extracurricular university events.</p>
+          </div>
+        </article>
+      </div>
+    </section>
+  `;
+}
+
+// --- СТРАНИЦА 2: PORTFOLIO ---
+function getPortfolioHTML() {
+  const projects = [
+    { name: 'IceBreaker App', date: 'October 2026', desc: 'Service to get to know each other better. Developed with C# and ASP.NET, using PostgreSQL and Docker.', img: 'icebreaker app pic.jpg', link: 'https://github.com/ddarlaa/IceBreakerApp/tree/laba5' },
+    { name: 'ITMO Sailing SMM', date: 'Summer 2026', desc: 'Content plan, designs, and texts for ITMO Sailing Club Telegram channel. 350+ subscribers.', img: 'smm proof.jpg', link: 'https://t.me/sailingclub_itmo' },
+    { name: 'Personal Blog (Hugo)', date: 'August 2026', desc: 'Hugo site with a blog and several small JS projects. HTML, CSS, JavaScript.', img: 'blogging.jpg', link: 'https://ddarlaa.github.io/front_laba2/blog/' },
+    { name: 'Photo Tech Presentation', date: 'September 2026', desc: 'Research presentation on modern photography technologies.', img: 'about-photo.jpg', link: '#' }
+  ];
+
+  return `
+    <section class="content-section portfolio-section">
+      <div class="section-heading"><h2>MAIN WORKS</h2></div>
+      <div class="portfolio-grid-page">
+        ${projects.map(p => `
+          <a href="${p.link}" target="_blank" class="project-card">
+            <div class="project-date-badge">${p.date}</div>
+            <img src="${BASE_URL}/images/${p.img}" alt="${p.name}">
+            <h3>${p.name}</h3>
+            <p>${p.desc}</p>
+            <span class="project-arrow">→</span>
+          </a>
+        `).join('')}
+      </div>
+    </section>
+  `;
+}
+
+// --- СТРАНИЦА 3: CONTACTS ---
+function getContactsHTML() {
+  return `
+    <section class="contact-section">
+      <p class="eyebrow">LET'S CONNECT</p>
+      <h2>CONTACTS.</h2>
+      
+      <div class="contact-links-grid">
+        <a href="tel:+79999999999" class="contact-big-link">📞 +7 (999) 999-99-99</a>
+        <a href="mailto:d.pugina@list.ru" class="contact-big-link">✉️ d.pugina@list.ru</a>
+      </div>
+
+      <div class="social-bento">
+        <a href="https://t.me/ddarla" target="_blank" class="bento-box"><span>Telegram</span></a>
+        <a href="https://t.me/+your_private_link" target="_blank" class="bento-box private"><span>Secret TG Channel 🔒</span></a>
+        <a href="https://github.com/ddarlaa" target="_blank" class="bento-box"><span>GitHub</span></a>
+        <a href="https://instagram.com/ddaarrla" target="_blank" class="bento-box pink"><span>Instagram</span></a>
+        <a href="https://pinterest.com/your_board" target="_blank" class="bento-box"><span>Pinterest (Vibes)</span></a>
+        <a href="https://linkedin.com/in/yourprofile" target="_blank" class="bento-box blue"><span>LinkedIn</span></a>
+      </div>
+    </section>
+  `;
+}
+
+// --- СТРАНИЦА 4: LIFE & WALL ---
+function getLifeHTML() {
+  const savedNotes = JSON.parse(localStorage.getItem('partyWallNotes') || '[]');
+  const defaultNote = `
+    <div class="friend-note pinned" style="transform: rotate(3deg); background: #f8ddea;">
+      <p>"Darla is the best! Loved the portfolio."</p><span>— Anonymous</span>
     </div>
-  </section>
+  `;
 
-  <footer class="site-footer">
-    <span>© 2026 DARLA</span>
-    <span>made with love and JavaScript</span>
-  </footer>
-`
+  const renderedNotes = savedNotes.map(n => `
+    <div class="friend-note pinned" style="transform: rotate(${n.rotation}deg); background: ${n.color};">
+      <p>"${n.msg}"</p><span>— ${n.name}</span>
+    </div>
+  `).join('');
 
-// ========================================
-// LOADING SCREEN
-// ========================================
+  return `
+    <section class="friend-space visible">
+      <div class="friend-intro">
+        <h2>okay... forget the CV.</h2>
+        <p>hobbies, sports, travel & raw vibes.</p>
+      </div>
 
-document.querySelector('#animal-fact').textContent = randomFact
+      <div class="friend-board">
+        <div class="friend-polaroid polaroid-one">
+          <img src="${BASE_URL}/images/sailing proof.jpg" alt="">
+          <span>sailing & traveling</span>
+        </div>
+        <div class="friend-note note-one">
+          <span>things I currently like:</span>
+          <p>late night walks, reading, getting out of comfort zone, ambient music.</p>
+        </div>
+      </div>
 
-window.setTimeout(() => {
-  document.querySelector('#loading-screen')?.classList.add('hidden')
-}, 4000)
-
-// ========================================
-// FRIEND MODE
-// ========================================
-
-const friendModeButton = document.querySelector('#friend-mode-button')
-
-friendModeButton.addEventListener('click', () => {
-  const isFriendMode = document.body.classList.toggle('friend-mode-active')
-  friendModeButton.textContent = isFriendMode ? 'CV MODE' : 'FRIEND MODE'
-})
-
-// ========================================
-// PORTFOLIO CAROUSEL
-// ========================================
-
-const projectCarousel = document.querySelector('.project-grid')
-const prevProjects = document.querySelector('#projects-prev')
-const nextProjects = document.querySelector('#projects-next')
-
-function scrollProjects(direction) {
-  const firstCard = projectCarousel?.querySelector('.project-card')
-  if (!firstCard || !projectCarousel) return
-
-  const styles = window.getComputedStyle(projectCarousel)
-  const gap = parseFloat(styles.columnGap || styles.gap) || 20
-  const distance = firstCard.getBoundingClientRect().width + gap
-
-  projectCarousel.scrollBy({
-    left: direction * distance,
-    behavior: 'smooth'
-  })
+      <div class="party-wall">
+        <div class="letters-heading">
+          <h3>PARTY WALL</h3>
+          <p>leave a postcard here, like on a wall at a home party.</p>
+        </div>
+        
+        <div class="wall-grid" id="wall-grid">
+          <article class="envelope-card">
+            <div class="envelope openable" tabindex="0">
+              <div class="letter">
+                <input type="text" class="letter-name" placeholder="your name (optional)">
+                <textarea class="letter-message" placeholder="write something nice..."></textarea>
+                <button class="send-letter">Pin to Wall ♡</button>
+              </div>
+              <div class="envelope-back"></div><div class="envelope-flap"></div>
+              <div class="envelope-front"><span>add note +</span></div>
+            </div>
+          </article>
+          
+          ${renderedNotes}
+          ${savedNotes.length === 0 ? defaultNote : ''}
+        </div>
+      </div>
+    </section>
+  `;
 }
 
-prevProjects?.addEventListener('click', () => scrollProjects(-1))
-nextProjects?.addEventListener('click', () => scrollProjects(1))
+// ========================================
+// EVENT LISTENERS
+// ========================================
+function attachEvents() {
+  document.querySelectorAll('.openable').forEach(env => {
+    env.addEventListener('click', e => {
+      if (e.target.closest('input, textarea, button')) return;
+      env.classList.toggle('open');
+    });
+  });
 
-// Disable arrows when the carousel reaches either end.
-function updateCarouselButtons() {
-  if (!projectCarousel || !prevProjects || !nextProjects) return
-
-  const maxScroll = projectCarousel.scrollWidth - projectCarousel.clientWidth
-  prevProjects.disabled = projectCarousel.scrollLeft <= 2
-  nextProjects.disabled = projectCarousel.scrollLeft >= maxScroll - 2
+  document.querySelectorAll('.send-letter').forEach(btn => {
+    btn.addEventListener('click', e => {
+      e.stopPropagation();
+      const letter = btn.closest('.letter');
+      const nameInput = letter.querySelector('.letter-name');
+      const msgInput = letter.querySelector('.letter-message');
+      
+      const name = nameInput.value.trim() || 'Anonymous';
+      const msg = msgInput.value.trim();
+      
+      if (!msg) {
+        alert('Please write a message first ♡');
+        return;
+      }
+      
+      const colors = ['#f8ddea', '#e0f7fa', '#fff5a8', '#f3b6cb'];
+      const randomColor = colors[Math.floor(Math.random() * colors.length)];
+      const randomRotation = (Math.random() * 6 - 3).toFixed(1);
+      
+      const savedNotes = JSON.parse(localStorage.getItem('partyWallNotes') || '[]');
+      savedNotes.unshift({ name, msg, color: randomColor, rotation: randomRotation });
+      localStorage.setItem('partyWallNotes', JSON.stringify(savedNotes));
+      
+      const newNote = document.createElement('div');
+      newNote.className = 'friend-note pinned page-transition';
+      newNote.style.transform = `rotate(${randomRotation}deg)`;
+      newNote.style.background = randomColor;
+      newNote.innerHTML = `<p>"${msg}"</p><span>— ${name}</span>`;
+      
+      const wall = document.getElementById('wall-grid');
+      wall.insertBefore(newNote, wall.children[1]);
+      
+      nameInput.value = '';
+      msgInput.value = '';
+      btn.closest('.envelope').classList.remove('open');
+    });
+  });
 }
 
-projectCarousel?.addEventListener('scroll', updateCarouselButtons, { passive: true })
-window.addEventListener('resize', updateCarouselButtons)
-requestAnimationFrame(updateCarouselButtons)
-
-// ========================================
-// ENVELOPES
-// ========================================
-
-const envelopes = document.querySelectorAll('.envelope')
-
-envelopes.forEach((envelope) => {
-  envelope.addEventListener('click', (event) => {
-    if (event.target.closest('input, textarea, button')) return
-    envelope.classList.toggle('open')
-  })
-
-  envelope.addEventListener('keydown', (event) => {
-    if (event.target !== envelope) return
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault()
-      envelope.classList.toggle('open')
-    }
-  })
-})
-
-// ========================================
-// SEND LETTER
-// ========================================
-
-document.querySelectorAll('.send-letter').forEach((button) => {
-  button.addEventListener('click', (event) => {
-    event.stopPropagation()
-
-    const letter = button.closest('.letter')
-    const nameInput = letter.querySelector('.letter-name')
-    const messageInput = letter.querySelector('.letter-message')
-    const name = nameInput.value.trim()
-    const message = messageInput.value.trim()
-
-    if (!name || !message) {
-      alert('write something first ♡')
-      return
-    }
-
-    const subject = `a little letter from ${name}`
-    const body = `hi darla ♡\n\n${message}\n\n— ${name}`
-    const mailto = 'mailto:d.pugina@list.ru'
-      + `?subject=${encodeURIComponent(subject)}`
-      + `&body=${encodeURIComponent(body)}`
-
-    window.location.href = mailto
-  })
-})
+renderApp();
